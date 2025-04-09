@@ -399,4 +399,4 @@ def extract_ppt_text(file_path):
     return text
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
