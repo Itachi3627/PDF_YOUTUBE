@@ -162,7 +162,14 @@ def process_video():
     if not youtube_link:
         return "Error: No YouTube link provided."
 
-    video_id = youtube_link.split("v=")[-1].split("&")[0]
+    # Extract video ID from different URL formats
+    if "youtube.com" in youtube_link:
+        video_id = youtube_link.split("v=")[-1].split("&")[0]
+    elif "youtu.be" in youtube_link:
+        video_id = youtube_link.split("youtu.be/")[-1].split("?")[0]
+    else:
+        video_id = youtube_link  # Assume it's already just the ID
+        
     thumbnail_url = f"http://img.youtube.com/vi/{video_id}/0.jpg"
     
     transcript = extract_transcript(video_id)
@@ -281,6 +288,13 @@ def download_media(video_id, media_type):
 
 def extract_transcript(video_id):
     try:
+        # Handle full YouTube URLs
+        if "youtube.com" in video_id or "youtu.be" in video_id:
+            if "youtube.com" in video_id:
+                video_id = video_id.split("v=")[-1].split("&")[0]
+            elif "youtu.be" in video_id:
+                video_id = video_id.split("youtu.be/")[-1].split("?")[0]
+        
         transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=['en', 'hi'])
         full_transcript = ' '.join([entry['text'] for entry in transcript])
         return full_transcript
